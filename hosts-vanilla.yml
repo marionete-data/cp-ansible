@@ -1,0 +1,35 @@
+all:
+  vars:
+    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
+    ansible_user: goncalovalente
+    ansible_become: true
+
+zookeeper:
+  hosts:
+    10.10.20.10:
+
+kafka_broker:
+  hosts:
+    10.10.20.20:
+    10.10.20.21:
+    10.10.20.22:
+
+schema_registry:
+  hosts:
+    10.10.20.30:
+
+ksql:
+  hosts:
+    10.10.20.30:
+
+kafka_connect:
+  hosts:
+    10.10.20.30:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
+
+control_center:
+  hosts:
+    10.10.20.40:
+
