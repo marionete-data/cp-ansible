@@ -29,35 +29,41 @@ all:
 
 zookeeper:
   hosts:
-    10.10.20.10:
-    10.10.20.11:  
-    10.10.20.12:  
+    zk-0.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 1
+    zk-1.europe-west2-a.c.danske-322408.internal:  
+      zookeeper_id: 2
+    zk-2.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 3
 
 kafka_broker:
   hosts:
-    10.10.20.20:
-    10.10.20.21:
-    10.10.20.22:
+    kfk-0.europe-west2-a.c.danske-322408.internal:
+      broker_id: 1
+    kfk-1.europe-west2-a.c.danske-322408.internal:
+      broker_id: 2
+    kfk-2.europe-west2-a.c.danske-322408.internal:
+      broker_id: 3
 
-# schema_registry:
-#   hosts:
-#     10.10.20.30:
+schema_registry:
+  hosts:
+    connect-etc.europe-west2-a.c.danske-322408.internal:
 
-# kafka_rest:
-#   hosts:
-#     10.10.20.23
+kafka_rest:
+  hosts:
+    rest-proxy.europe-west2-a.c.danske-322408.internal:
 
-# ksql:
-#   hosts:
-#     10.10.20.30:
+ksql:
+  hosts:
+    connect-etc.europe-west2-a.c.danske-322408.internal:
 
-# kafka_connect:
-#   hosts:
-#     10.10.20.30:
-#       vars:
-#         kafka_connect_confluent_hub_plugins:
-#           - confluentinc/kafka-connect-datagen:0.4.0
+kafka_connect:
+  hosts:
+    connect-etc.europe-west2-a.c.danske-322408.internal:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
 
-# control_center:
-#   hosts:
-#     10.10.20.40:
+control_center:
+  hosts:
+    control-center.europe-west2-a.c.danske-322408.internal:
