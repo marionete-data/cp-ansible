@@ -3,10 +3,35 @@ all:
     ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
     ansible_user: goncalovalente
     ansible_become: true
+    # CUSTOM CP COMPONENTS CONFIG
+      # KAFKA
+    kafka_broker_custom_properties: 
+      log.dirs: "/confluent/data/data"
+    kafka_broker_log_dir: "/confluent/logs/logs"
+      # ZOOKEEPER
+    zookeeper_custom_properties: 
+      dataDir: "/confluent/data/data"
+    zookeeper_log_dir: "/confluent/logs/logs"
+      # SCHEMA REGISTRY
+    schema_registry_log_dir: "/confluent/logs/logs"
+      # KAFKA CONNECT
+    kafka_connect_log_dir: "/confluent/logs/logs"
+      # KSQL
+    ksql_custom_properties:
+      ksql.streams.state.dir: "/confluent/data/data"
+    ksql_custom_log_dir: "/confluent/logs/logs"
+      # CONTROL CENTER
+    control_center_custom_properties:
+      confluent.controlcenter.data.dir: "/confluent/data/data"
+    control_center_custom_log_dir: "/confluent/logs/logs"
+    # SECURITY CONFIG
+    ssl_enabled: true
 
 zookeeper:
   hosts:
     10.10.20.10:
+    10.10.20.11:  
+    10.10.20.12:  
 
 kafka_broker:
   hosts:
@@ -14,22 +39,25 @@ kafka_broker:
     10.10.20.21:
     10.10.20.22:
 
-schema_registry:
-  hosts:
-    10.10.20.30:
+# schema_registry:
+#   hosts:
+#     10.10.20.30:
 
-ksql:
-  hosts:
-    10.10.20.30:
+# kafka_rest:
+#   hosts:
+#     10.10.20.23
 
-kafka_connect:
-  hosts:
-    10.10.20.30:
-      vars:
-        kafka_connect_confluent_hub_plugins:
-          - confluentinc/kafka-connect-datagen:0.4.0
+# ksql:
+#   hosts:
+#     10.10.20.30:
 
-control_center:
-  hosts:
-    10.10.20.40:
+# kafka_connect:
+#   hosts:
+#     10.10.20.30:
+#       vars:
+#         kafka_connect_confluent_hub_plugins:
+#           - confluentinc/kafka-connect-datagen:0.4.0
 
+# control_center:
+#   hosts:
+#     10.10.20.40:
