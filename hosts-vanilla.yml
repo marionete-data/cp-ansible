@@ -3,6 +3,10 @@ all:
     ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
     ansible_user: goncalovalente
     ansible_become: true
+    # SECURITY CONFIG
+    ssl_enabled: true
+    # ENABLE JMX EXPORTER
+    jmxexporter_enabled: true
     # CUSTOM CP COMPONENTS CONFIG
       # KAFKA
     kafka_broker_custom_properties: 
@@ -24,8 +28,6 @@ all:
     control_center_custom_properties:
       confluent.controlcenter.data.dir: "/confluent/data/data"
     control_center_custom_log_dir: "/confluent/logs/logs"
-    # SECURITY CONFIG
-    ssl_enabled: true
 
 zookeeper:
   hosts:
@@ -47,7 +49,7 @@ kafka_broker:
 
 schema_registry:
   hosts:
-    connect-etc.europe-west2-a.c.danske-322408.internal:
+    sr-ksql.europe-west2-a.c.danske-322408.internal:
 
 kafka_rest:
   hosts:
@@ -55,15 +57,33 @@ kafka_rest:
 
 ksql:
   hosts:
-    connect-etc.europe-west2-a.c.danske-322408.internal:
+    sr-ksql.europe-west2-a.c.danske-322408.internal:
 
 kafka_connect:
+  children:
+    elastic:
+    syslog:
+
+elastic:
+  vars:
+    kafka_connect_group_id: connect-elastic
   hosts:
-    connect-etc.europe-west2-a.c.danske-322408.internal:
-      vars:
-        kafka_connect_confluent_hub_plugins:
-          - confluentinc/kafka-connect-datagen:0.4.0
+    conn-1.europe-west2-a.c.danske-322408.internal:
+
+syslog:
+  vars:
+    kafka_connect_group_id: connect-syslog
+  hosts:
+    conn-2.europe-west2-a.c.danske-322408.internal:
+
+kafka_connect_replicator:
+  hosts:
+    replicator.europe-west2-a.c.danske-322408.internal:
 
 control_center:
+  vars:
+    kafka_connect_cluster_ansible_group_names:
+      - syslog
+      - elastic
   hosts:
     control-center.europe-west2-a.c.danske-322408.internal:
