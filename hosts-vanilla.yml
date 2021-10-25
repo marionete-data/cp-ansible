@@ -5,6 +5,12 @@ all:
     ansible_become: true
     # SECURITY CONFIG
     ssl_enabled: true
+    zookeeper_ssl_enabled: false
+    ssl_custom_certs: true
+    ssl_ca_cert_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/CA/ca.crt" # Can be a bundle of ca certs to be included in truststore
+    ssl_signed_cert_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/{{inventory_hostname}}-ca-signed.crt" # Can be a full chain of certs
+    ssl_key_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/{{inventory_hostname}}.key"
+    ssl_key_password: "pass1234"
     # ENABLE JMX EXPORTER
     jmxexporter_enabled: true
     # CUSTOM CP COMPONENTS CONFIG
@@ -28,6 +34,43 @@ all:
     control_center_custom_properties:
       confluent.controlcenter.data.dir: "/confluent/data/data"
     control_center_custom_log_dir: "/confluent/logs/logs"
+    confluent_license: !THIS_IS_AN_INVALID_LICENSE!
+    sasl_protocol: plain
+    zookeeper_sasl_protocol: digest
+    sasl_plain_users:
+      admin:
+        principal: 'marionete'
+        password: 'marionete'
+      schema_registry:
+        principal: 'marionete'
+        password: 'marionete'
+      kafka_connect:
+        principal: 'marionete'
+        password: 'marionete'
+      ksql:
+        principal: 'marionete'
+        password: 'marionete'
+      kafka_rest:
+        principal: 'marionete'
+        password: 'marionete'
+      control_center:
+        principal: 'marionete'
+        password: 'marionete'
+      kafka_connect_replicator:
+        principal: 'marionete'
+        password: 'marionete'
+      client:
+        principal: 'marionete'
+        password: 'marionete'
+      user1:
+        principal: 'rui'
+        password: 'marionete'
+      user2:
+        principal: 'goncalo'
+        password: 'marionete'
+      user3:
+        principal: 'bruno'
+        password: 'marionete'
 
 zookeeper:
   hosts:
@@ -39,6 +82,9 @@ zookeeper:
       zookeeper_id: 3
 
 kafka_broker:
+  vars:
+    kafka_broker_custom_properties:
+      allow.everyone.if.no.acl.found: false
   hosts:
     kfk-0.europe-west2-a.c.danske-322408.internal:
       broker_id: 1
@@ -51,39 +97,33 @@ schema_registry:
   hosts:
     sr-ksql.europe-west2-a.c.danske-322408.internal:
 
-kafka_rest:
-  hosts:
-    rest-proxy.europe-west2-a.c.danske-322408.internal:
+# kafka_rest:
+#   hosts:
+#     rest-proxy.europe-west2-a.c.danske-322408.internal:
 
-ksql:
-  hosts:
-    sr-ksql.europe-west2-a.c.danske-322408.internal:
+# ksql:
+#   hosts:
+#     sr-ksql.europe-west2-a.c.danske-322408.internal:
 
 kafka_connect:
-  children:
-    elastic:
-    syslog:
-
-elastic:
-  vars:
-    kafka_connect_group_id: connect-elastic
   hosts:
     conn-1.europe-west2-a.c.danske-322408.internal:
-
-syslog:
-  vars:
-    kafka_connect_group_id: connect-syslog
-  hosts:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
     conn-2.europe-west2-a.c.danske-322408.internal:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
+    conn-3.europe-west2-a.c.danske-322408.internal:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
 
-kafka_connect_replicator:
-  hosts:
-    replicator.europe-west2-a.c.danske-322408.internal:
+# kafka_connect_replicator:
+#   hosts:
+#     replicator.europe-west2-a.c.danske-322408.internal:
 
 control_center:
-  vars:
-    kafka_connect_cluster_ansible_group_names:
-      - syslog
-      - elastic
   hosts:
     control-center.europe-west2-a.c.danske-322408.internal:
