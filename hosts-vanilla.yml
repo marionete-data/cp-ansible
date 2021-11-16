@@ -5,19 +5,32 @@ all:
     ansible_become: true
     # SECURITY CONFIG
     ssl_enabled: true
-    zookeeper_ssl_enabled: false
+    # zookeeper_ssl_enabled: false
     ssl_custom_certs: true
     ssl_ca_cert_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/CA/ca.crt" # Can be a bundle of ca certs to be included in truststore
     ssl_signed_cert_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/{{inventory_hostname}}-ca-signed.crt" # Can be a full chain of certs
     ssl_key_filepath: "/Users/goncalovalente/Desktop/ssl/centos-docker/{{inventory_hostname}}.key"
     ssl_key_password: "pass1234"
     # ENABLE JMX EXPORTER
-    jmxexporter_enabled: true
+    # jmxexporter_enabled: true
     # CUSTOM CP COMPONENTS CONFIG
       # KAFKA
     kafka_broker_custom_properties: 
       log.dirs: "/confluent/data/data"
     kafka_broker_log_dir: "/confluent/logs/logs"
+    kafka_broker_custom_listeners:
+      internal:
+        name: INTERNAL
+        port: 9092
+        ssl_enabled: false
+        ssl_mutual_auth_enabled: false
+        sasl_protocol: none
+      client_listener:
+        name: CLIENT
+        port: 9093
+        ssl_enabled: true
+        ssl_mutual_auth_enabled: false
+        sasl_protocol: none
       # ZOOKEEPER
     zookeeper_custom_properties: 
       dataDir: "/confluent/data/data"
@@ -34,43 +47,45 @@ all:
     control_center_custom_properties:
       confluent.controlcenter.data.dir: "/confluent/data/data"
     control_center_custom_log_dir: "/confluent/logs/logs"
-    confluent_license: !THIS_IS_AN_INVALID_LICENSE!
-    sasl_protocol: plain
-    zookeeper_sasl_protocol: digest
-    sasl_plain_users:
-      admin:
-        principal: 'marionete'
-        password: 'marionete'
-      schema_registry:
-        principal: 'marionete'
-        password: 'marionete'
-      kafka_connect:
-        principal: 'marionete'
-        password: 'marionete'
-      ksql:
-        principal: 'marionete'
-        password: 'marionete'
-      kafka_rest:
-        principal: 'marionete'
-        password: 'marionete'
-      control_center:
-        principal: 'marionete'
-        password: 'marionete'
-      kafka_connect_replicator:
-        principal: 'marionete'
-        password: 'marionete'
-      client:
-        principal: 'marionete'
-        password: 'marionete'
-      user1:
-        principal: 'rui'
-        password: 'marionete'
-      user2:
-        principal: 'goncalo'
-        password: 'marionete'
-      user3:
-        principal: 'bruno'
-        password: 'marionete'
+    control_center_service_environment_overrides:
+      CONTROL_CENTER_OPTS: "-Djava.io.tmpdir=/confluent/data/data"
+    # confluent_license: !THIS_IS_AN_INVALID_LICENSE!
+    # sasl_protocol: plain
+    # zookeeper_sasl_protocol: digest
+    # sasl_plain_users:
+    #   admin:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   schema_registry:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   kafka_connect:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   ksql:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   kafka_rest:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   control_center:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   kafka_connect_replicator:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   client:
+    #     principal: 'marionete'
+    #     password: 'marionete'
+    #   user1:
+    #     principal: 'rui'
+    #     password: 'marionete'
+    #   user2:
+    #     principal: 'goncalo'
+    #     password: 'marionete'
+    #   user3:
+    #     principal: 'bruno'
+    #     password: 'marionete'
 
 zookeeper:
   hosts:
@@ -93,9 +108,9 @@ kafka_broker:
     kfk-2.europe-west2-a.c.danske-322408.internal:
       broker_id: 3
 
-schema_registry:
-  hosts:
-    sr-ksql.europe-west2-a.c.danske-322408.internal:
+# schema_registry:
+#   hosts:
+#     sr-ksql.europe-west2-a.c.danske-322408.internal:
 
 # kafka_rest:
 #   hosts:
@@ -105,20 +120,20 @@ schema_registry:
 #   hosts:
 #     sr-ksql.europe-west2-a.c.danske-322408.internal:
 
-kafka_connect:
-  hosts:
-    conn-1.europe-west2-a.c.danske-322408.internal:
-      vars:
-        kafka_connect_confluent_hub_plugins:
-          - confluentinc/kafka-connect-datagen:0.4.0
-    conn-2.europe-west2-a.c.danske-322408.internal:
-      vars:
-        kafka_connect_confluent_hub_plugins:
-          - confluentinc/kafka-connect-datagen:0.4.0
-    conn-3.europe-west2-a.c.danske-322408.internal:
-      vars:
-        kafka_connect_confluent_hub_plugins:
-          - confluentinc/kafka-connect-datagen:0.4.0
+# kafka_connect:
+#   hosts:
+#     conn-1.europe-west2-a.c.danske-322408.internal:
+#       vars:
+#         kafka_connect_confluent_hub_plugins:
+#           - confluentinc/kafka-connect-datagen:0.4.0
+#     conn-2.europe-west2-a.c.danske-322408.internal:
+#       vars:
+#         kafka_connect_confluent_hub_plugins:
+#           - confluentinc/kafka-connect-datagen:0.4.0
+#     conn-3.europe-west2-a.c.danske-322408.internal:
+#       vars:
+#         kafka_connect_confluent_hub_plugins:
+#           - confluentinc/kafka-connect-datagen:0.4.0
 
 # kafka_connect_replicator:
 #   hosts:
