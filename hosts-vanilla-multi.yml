@@ -1,0 +1,141 @@
+all:
+  vars:
+    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
+    ansible_user: goncalovalente
+    ansible_become: true
+    # CUSTOM CP COMPONENTS CONFIG
+      # KAFKA
+    kafka_broker_custom_properties: 
+      log.dirs: "/confluent/data/data"
+    kafka_broker_log_dir: "/confluent/logs/logs"
+      # ZOOKEEPER
+    zookeeper_custom_properties: 
+      dataDir: "/confluent/data/data"
+    zookeeper_log_dir: "/confluent/logs/logs"
+      # SCHEMA REGISTRY
+    schema_registry_log_dir: "/confluent/logs/logs"
+      # KAFKA CONNECT
+    kafka_connect_log_dir: "/confluent/logs/logs"
+      # KSQL
+    ksql_custom_properties:
+      ksql.streams.state.dir: "/confluent/data/data"
+    ksql_custom_log_dir: "/confluent/logs/logs"
+      # CONTROL CENTER
+    control_center_custom_properties:
+      confluent.controlcenter.data.dir: "/confluent/data/data"
+    control_center_custom_log_dir: "/confluent/logs/logs"
+    control_center_service_environment_overrides:
+      CONTROL_CENTER_OPTS: "-Djava.io.tmpdir=/confluent/data/data"
+    # NOT REQUIRED AFTER UPGRADE TO 7.0.0
+    redhat_java_package_name: java-11-openjdk
+    # ACLs
+    # sasl_protocol: plain
+    # sasl_plain_users:
+    #   admin:
+    #     principal: 'kafka'
+    #     password: 'admin-secret'
+    #   schema_registry:
+    #     principal: 'schema-registry'
+    #     password: 'schema_registry-secret'
+    #   kafka_connect:
+    #     principal: 'kafka-connect'
+    #     password: 'kafka_connect-secret'
+    #   ksql:
+    #     principal: 'ksqldb'
+    #     password: 'ksql-secret'
+    #   kafka_rest:
+    #     principal: 'kafka_rest'
+    #     password: 'kafka_rest-secret'
+    #   control_center:
+    #     principal: 'control-center'
+    #     password: 'control_center-secret'
+    #   kafka_connect_replicator:
+    #     principal: 'kafka_connect_replicator'
+    #     password: 'kafka_connect_replicator-secret'
+    #   client:
+    #     principal: 'client'
+    #     password: 'client-secret'
+    #   user1:
+    #     principal: 'user1'
+    #     password: my-secret
+    #   user2:
+    #     principal: 'user2'
+    #     password: my-secret
+    #   user3:
+    #     principal: 'user3'
+    #     password: my-secret
+
+zookeeper:
+  hosts:
+    zk-0.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 1
+    zk-1.europe-west2-a.c.danske-322408.internal:  
+      zookeeper_id: 2
+    zk-2.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 3
+
+kafka_broker:
+  hosts:
+    kfk-0.europe-west2-a.c.danske-322408.internal:
+      kafka_broker_custom_properties:
+        broker.rack: dc-1
+      broker_id: 1
+    kfk-1.europe-west2-a.c.danske-322408.internal:
+      kafka_broker_custom_properties:
+        broker.rack: dc-1
+      broker_id: 2
+    kfk-2.europe-west2-a.c.danske-322408.internal:
+      kafka_broker_custom_properties:
+        broker.rack: dc-2
+      broker_id: 3
+    kfk-3.europe-west2-a.c.danske-322408.internal:
+      kafka_broker_custom_properties:
+        broker.rack: dc-2
+      broker_id: 4
+    kfk-4.europe-west2-a.c.danske-322408.internal:
+      kafka_broker_custom_properties:
+        broker.rack: dc-3
+      broker_id: 5
+
+control_center:
+  vars:
+    kafka_connect_cluster_ansible_group_names:
+      - syslog-0
+      - syslog-1
+      - syslog-2
+  hosts:
+    control-center.europe-west2-a.c.danske-322408.internal:
+
+kafka_connect:
+  children:
+    syslog-0:
+    syslog-1:
+    syslog-2:
+
+syslog-0:
+  vars:
+    kafka_connect_group_id: connect_syslog_0
+    kafka_connect_plugins_remote:
+    - https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-syslog/versions/1.4.0/confluentinc-kafka-connect-syslog-1.4.0.zip
+    - https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-elasticsearch/versions/11.1.5/confluentinc-kafka-connect-elasticsearch-11.1.5.zip
+  hosts:
+    conn-0.europe-west2-a.c.danske-322408.internal:
+
+syslog-1:
+  vars:
+    kafka_connect_group_id: connect_syslog_1
+    kafka_connect_plugins_remote:
+    - https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-syslog/versions/1.4.0/confluentinc-kafka-connect-syslog-1.4.0.zip
+
+  hosts:
+    conn-1.europe-west2-a.c.danske-322408.internal:
+
+syslog-2:
+  vars:
+    kafka_connect_group_id: connect_syslog_2
+    kafka_connect_plugins_remote:
+    - https://d1i4a15mxbxib1.cloudfront.net/api/plugins/confluentinc/kafka-connect-syslog/versions/1.4.0/confluentinc-kafka-connect-syslog-1.4.0.zip
+
+  hosts:
+    conn-2.europe-west2-a.c.danske-322408.internal:
+

@@ -1,0 +1,44 @@
+all:
+  vars:
+    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
+    ansible_user: goncalovalente
+    ansible_become: true
+    # # SECURITY CONFIG
+    ssl_enabled: true
+    # # CUSTOM CP COMPONENTS CONFIG
+      # KAFKA
+    kafka_broker_custom_properties: 
+      log.dirs: "/confluent/data/data"
+    kafka_broker_log_dir: "/confluent/logs/logs"
+      # ZOOKEEPER
+    zookeeper_custom_properties: 
+      dataDir: "/confluent/data/data"
+    zookeeper_log_dir: "/confluent/logs/logs"
+      # CONTROL CENTER
+    control_center_custom_properties:
+      confluent.controlcenter.data.dir: "/confluent/data/data"
+    control_center_custom_log_dir: "/confluent/logs/logs"
+    control_center_service_environment_overrides:
+      CONTROL_CENTER_OPTS: "-Djava.io.tmpdir=/confluent/data/data"
+
+zookeeper:
+  hosts:
+    zk-0.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 1
+    zk-1.europe-west2-a.c.danske-322408.internal:  
+      zookeeper_id: 2
+    zk-2.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 3
+
+kafka_broker:
+  hosts:
+    kfk-0.europe-west2-a.c.danske-322408.internal:
+      broker_id: 1
+    kfk-1.europe-west2-a.c.danske-322408.internal:
+      broker_id: 2
+    kfk-2.europe-west2-a.c.danske-322408.internal:
+      broker_id: 3
+
+control_center:
+  hosts:
+    control-center.europe-west2-a.c.danske-322408.internal:
