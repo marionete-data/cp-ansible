@@ -1,0 +1,105 @@
+all:
+  vars:
+    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q andrew.king@35.214.34.48"
+    ansible_user: andrew.king
+    ansible_become: true
+    # # SECURITY CONFIG
+    ssl_enabled: true
+    sasl_protocol: plain
+    sasl_plain_users:
+      admin:
+        principal: 'kafka'
+        password: 'admin-secret'
+      schema_registry:
+        principal: 'schema-registry'
+        password: 'schema_registry-secret'
+      kafka_connect:
+        principal: 'kafka-connect'
+        password: 'kafka_connect-secret'
+      ksql:
+        principal: 'ksqldb'
+        password: 'ksql-secret'
+      kafka_rest:
+        principal: 'kafka_rest'
+        password: 'kafka_rest-secret'
+      control_center:
+        principal: 'control-center'
+        password: 'control_center-secret'
+      client:
+        principal: 'client'
+        password: 'client-secret'
+      user1:
+        principal: 'user1'
+        password: my-secret
+      user2:
+        principal: 'user2'
+        password: my-secret
+      user3:
+        principal: 'user3'
+        password: my-secret
+    zookeeper_quorum_authentication_type: mtls
+    kafka_broker_rest_proxy_authentication_type: basic
+    schema_registry_authentication_type: basic
+    kafka_connect_authentication_type: basic
+    kafka_rest_authentication_type: basic
+    ksql_authentication_type: basic
+    control_center_authentication_type: basic
+    # # CUSTOM CP COMPONENTS CONFIG
+      # KAFKA
+    kafka_broker_custom_properties: 
+      log.dirs: "/confluent/data/data"
+      authorizer.class.name: "kafka.security.auth.SimpleAclAuthorizer"
+      allow.everyone.if.no.acl.found: false
+      super.users: "User:kafka; User:admin"
+    kafka_broker_log_dir: "/confluent/logs/logs"
+      # ZOOKEEPER
+    zookeeper_custom_properties: 
+      dataDir: "/confluent/data/data"
+    zookeeper_log_dir: "/confluent/logs/logs"
+      # CONTROL CENTER
+    control_center_custom_properties:
+      confluent.controlcenter.data.dir: "/confluent/data/data"
+    control_center_custom_log_dir: "/confluent/logs/logs"
+    control_center_service_environment_overrides:
+      CONTROL_CENTER_OPTS: "-Djava.io.tmpdir=/confluent/data/data -Djava.security.auth.login.config=jaas.conf"
+
+zookeeper:
+  hosts:
+    zk-0.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 1
+    zk-1.europe-west2-a.c.danske-322408.internal:  
+      zookeeper_id: 2
+    zk-2.europe-west2-a.c.danske-322408.internal:
+      zookeeper_id: 3
+
+kafka_broker:
+  hosts:
+    kfk-0.europe-west2-a.c.danske-322408.internal:
+      broker_id: 1
+    kfk-1.europe-west2-a.c.danske-322408.internal:
+      broker_id: 2
+    kfk-2.europe-west2-a.c.danske-322408.internal:
+      broker_id: 3
+
+schema_registry:
+  hosts:
+    sr-ksql.europe-west2-a.c.danske-322408.internal:
+
+kafka_rest:
+  hosts:
+    rest-proxy.europe-west2-a.c.danske-322408.internal:
+
+ksql:
+  hosts:
+    sr-ksql.europe-west2-a.c.danske-322408.internal:
+
+kafka_connect:
+  hosts:
+    conn-1.europe-west2-a.c.danske-322408.internal:
+      vars:
+        kafka_connect_confluent_hub_plugins:
+          - confluentinc/kafka-connect-datagen:0.4.0
+
+control_center:
+  hosts:
+    control-center.europe-west2-a.c.danske-322408.internal:

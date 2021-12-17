@@ -1,0 +1,125 @@
+kafka-acls \
+	--bootstrap-server $(hostname -f):9092 \
+	--command-config /etc/kafka/client.properties \
+	--add \
+	--force \
+	--allow-principal User:control-center \
+	--topic _schemas \
+	--group schema-registry \
+	--cluster \
+	--producer \
+	--consumer
+
+export PRINCIPAL=User:username
+export CONTROL_CENTER_OPTS="-Djava.security.auth.login.config=<path-to-kafka-jaas.conf>"
+bin/control-center-set-acls config/control-center.properties
+
+
+kafka-acls --bootstrap-server=$(hostname -f):9092 --list --command-config=/etc/kafka/client.properties
+
+kafka-acls --bootstrap-server=$(hostname -f):9092 --add --allow-principal User:control-center --command-config=/etc/kafka/client.properties --cluster
+
+kafka-topics --create --topic test-topic --bootstrap-server $(hostname -f):9092 --command-config=/etc/kafka/client.properties
+
+kafka-topics --list --bootstrap-server $(hostname -f):9092 --command-config=/etc/kafka/client.properties
+
+
+kafka-console-producer --broker-list $(hostname -f):9092 --topic test-topic --producer.config=/etc/kafka/client.properties
+
+kafka-console-consumer --topic test-topic --from-beginning --consumer.config=/etc/kafka/client.properties --bootstrap-server=$(hostname -f):9092
+
+
+
+export KAFKA_OPTS="-Djava.security.auth.login.config=<path to JAAS conf file>"
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --producer --consumer --topic _schemas --group schema-registry
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation DescribeConfigs --topic _schemas
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation Describe --topic _schemas
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation Read --topic _schemas
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation Write --topic _schemas
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation Describe --topic __consumer_offsets
+
+kafka-acls --bootstrap-server $(hostname -f):9092 --command-config /etc/kafka/client.properties --add \
+               --allow-principal 'User:schema-registry' --allow-host '*' \
+               --operation Create --cluster controlcenter.cluster
+
+
+
+
+
+
+
+
+kafka-acls --bootstrap-server=$(hostname -f):9092 --list --command-config=/etc/kafka/client.properties
+Current ACLs for resource `ResourcePattern(resourceType=GROUP, name=_confluent-controlcenter-6-2-0-1, patternType=LITERAL)`: 
+        (principal=User:kafka, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=READ, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=_confluent-metrics, patternType=LITERAL)`: 
+        (principal=User:admin, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=GROUP, name=_confluent-controlcenter-6-2-0-1-command, patternType=LITERAL)`: 
+        (principal=User:control-center, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=READ, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=GROUP, name=schema-registry, patternType=LITERAL)`: 
+        (principal=User:control-center, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:schema-registry, host=*, operation=READ, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=_confluent-command, patternType=LITERAL)`: 
+        (principal=User:admin, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:kafka, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:admin, host=*, operation=DESCRIBE_CONFIGS, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=_schemas, patternType=LITERAL)`: 
+        (principal=User:schema-registry, host=*, operation=READ, permissionType=ALLOW)
+        (principal=User:schema-registry, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=WRITE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=CREATE, permissionType=ALLOW)
+        (principal=User:control-center, host=*, operation=DESCRIBE, permissionType=ALLOW)
+        (principal=User:schema-registry, host=*, operation=CREATE, permissionType=ALLOW)

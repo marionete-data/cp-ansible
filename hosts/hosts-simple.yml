@@ -1,7 +1,7 @@
 all:
   vars:
-    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q goncalovalente@35.214.34.48"
-    ansible_user: goncalovalente
+    ansible_ssh_common_args: -o ProxyCommand="ssh -W %h:%p -q andrew.king@35.214.34.48"
+    ansible_user: andrew.king
     ansible_become: true
     # # SECURITY CONFIG
     ssl_enabled: true
